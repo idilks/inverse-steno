@@ -344,3 +344,4 @@ def run_evaluation(n_trials, task_generator, steganography_scheme, detector):
 
 **Inverse planning reference:**
 - Tan Xuan's Gen.jl notebook for inverse planning from scratch
+https://colab.research.google.com/drive/11riF0x5X4tx-2qwWUthE72vKHdsx1KS5

@@ -1,1 +1,18 @@
-*pdf
+# python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# testing & cache
+.pytest_cache/
+.cache/
+*.cache
+
+# results / outputs
+results/
+test_results/
+*.log
+
+# files
+*.pdf
