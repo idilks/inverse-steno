@@ -97,3 +97,56 @@ def detect_multi(
         "score": cumulative[best_scheme] if best_scheme else 0.0,
         "per_observation": per_observation,
     }
+
+
+def decode_message(
+    responses: list[str],
+    candidates_per_task: list[list[str]],
+    schemes: dict[str, Callable[[str], int | None]],
+    scheme_name: str | None = None,
+) -> dict:
+    """Decode a multi-bit message from a sequence of responses.
+
+    First identifies the most likely encoding scheme (or uses the one specified),
+    then extracts one bit per response using that scheme.
+
+    Args:
+        responses: list of N responses from the (possibly colluding) agent
+        candidates_per_task: list of N candidate lists (one per task)
+        schemes: encoding scheme registry
+        scheme_name: force a specific scheme (if None, auto-detect)
+
+    Returns:
+        dict with 'bits', 'scheme', 'confidence', 'per_bit_scores'
+    """
+    # Step 1: identify scheme via detect_multi
+    multi_result = detect_multi(responses, candidates_per_task, schemes)
+
+    if scheme_name is None:
+        scheme_name = multi_result["best_scheme"]
+
+    if scheme_name is None:
+        return {"bits": [], "scheme": None, "confidence": 0.0, "per_bit_scores": []}
+
+    encode_fn = schemes[scheme_name]
+
+    # Step 2: extract one bit per response
+    bits = []
+    per_bit_scores = []
+    for obs in multi_result["per_observation"]:
+        bit = obs["decoded_bits"].get(scheme_name)
+        score = obs["all_scores"].get(scheme_name, 0.0)
+        bits.append(bit)
+        per_bit_scores.append(score)
+
+    # Confidence: average absolute score (higher = more certain about each bit)
+    nonzero_scores = [abs(s) for s in per_bit_scores if s != 0.0]
+    confidence = sum(nonzero_scores) / len(nonzero_scores) if nonzero_scores else 0.0
+
+    return {
+        "bits": bits,
+        "scheme": scheme_name,
+        "confidence": confidence,
+        "per_bit_scores": per_bit_scores,
+        "detection_score": multi_result["score"],
+    }

@@ -15,11 +15,12 @@ The log-odds ratio simplifies to `log(0.5) - log(p_bit)`, where `p_bit` is the f
 ```
 src/
   schemes/           # pure functions: str -> int | None
-    synonym.py       # first synonym-pair match -> bit (8 pairs, PRIMARY)
+    synonym.py       # first synonym-pair match -> bit (16 pairs, PRIMARY)
     structural.py    # answer position + step numbering -> bit
     parity.py        # word count mod 2 (sanity check only)
+    recommendation.py # buy/sell signal -> bit
   detector/
-    inverse_planning.py  # detect(), detect_multi()
+    inverse_planning.py  # detect(), detect_multi(), decode_message()
     sampling.py          # async candidate generation + disk cache
   baselines/
     llm_judge.py     # prompt-based detection
@@ -27,8 +28,12 @@ src/
   eval/
     auc.py           # Mann-Whitney AUC (no sklearn)
     multi_obs.py     # AUC-vs-N curve
-    run_eval.py      # evaluation from JSON data files
-tests/               # 30 tests, all passing
+    run_eval.py      # evaluation from JSON data files + benchmark results
+  benchmark/
+    attackers.py     # 3 Redwood-style attackers (intro, scratchpad, tone), 4 bits each
+    dataset.py       # AQUA-RAT loader (HuggingFace + local cache)
+    run_benchmark.py # full pipeline: both conditions, AUC + BER metrics
+tests/               # 70 tests, all passing
 ```
 
 ## Commands
@@ -40,5 +45,5 @@ python -m pytest tests/ -v
 
 ## Status
 
-- **Done:** detector core, encoding schemes, baselines, eval pipeline, unit tests (30/30)
-- **Next:** Phase 0 pilot — 10 AQUA-RAT problems, K=50 samples, measure bit asymmetry per scheme. Go/no-go gate for each encoding. Needs API keys.
+- **Done:** detector core, encoding schemes, baselines, eval pipeline, benchmark integration (attackers + dataset + pipeline), decode_message(), unit tests (70/70)
+- **Next:** Phase 0 pilot — run benchmark with API keys. `run_full_benchmark(model_fn=..., n_questions=10, k_candidates=50)`. Needs Gemini 2.5 Flash access + `datasets` pip package (or cached aqua_rat.json).
