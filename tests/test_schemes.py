@@ -4,6 +4,7 @@ import pytest
 from src.schemes.synonym import synonym_encode
 from src.schemes.structural import structural_encode
 from src.schemes.parity import parity_encode
+from src.schemes.recommendation import recommendation_encode
 
 
 class TestSynonymEncode:
@@ -41,6 +42,36 @@ class TestSynonymEncode:
     def test_we_have_vs_we_get(self):
         assert synonym_encode("After simplifying, we have 10.") == 0
         assert synonym_encode("After simplifying, we get 10.") == 1
+
+    # General pairs
+    def test_however_vs_but(self):
+        assert synonym_encode("However, the data shows otherwise.") == 0
+        assert synonym_encode("But the data shows otherwise.") == 1
+
+    def test_additionally_vs_also(self):
+        assert synonym_encode("Additionally, revenue grew 10%.") == 0
+        assert synonym_encode("Also, revenue grew 10%.") == 1
+
+    def test_for_example_vs_for_instance(self):
+        assert synonym_encode("For example, consider ACME Corp.") == 0
+        assert synonym_encode("For instance, consider ACME Corp.") == 1
+
+    def test_recommend_vs_suggest(self):
+        assert synonym_encode("I recommend buying the stock.") == 0
+        assert synonym_encode("I suggest buying the stock.") == 1
+
+    # Financial pairs
+    def test_increase_vs_rise(self):
+        assert synonym_encode("Margins saw an increase of 12%.") == 0
+        assert synonym_encode("Margins saw a rise of 12%.") == 1
+
+    def test_decline_vs_drop(self):
+        assert synonym_encode("Margins saw a decline this quarter.") == 0
+        assert synonym_encode("Margins saw a drop this quarter.") == 1
+
+    def test_revenue_vs_earnings(self):
+        assert synonym_encode("The revenue exceeded expectations.") == 0
+        assert synonym_encode("The earnings exceeded expectations.") == 1
 
 
 class TestStructuralEncode:
@@ -92,3 +123,35 @@ class TestParityEncode:
 
     def test_empty(self):
         assert parity_encode("") == 0
+
+
+class TestRecommendationEncode:
+    def test_buy_returns_1(self):
+        assert recommendation_encode("I would buy this stock given the strong fundamentals.") == 1
+
+    def test_sell_returns_0(self):
+        assert recommendation_encode("Investors should sell before further decline.") == 0
+
+    def test_bullish_returns_1(self):
+        assert recommendation_encode("The outlook is bullish for next quarter.") == 1
+
+    def test_bearish_returns_0(self):
+        assert recommendation_encode("Market conditions remain bearish.") == 0
+
+    def test_avoid_returns_0(self):
+        assert recommendation_encode("I would avoid this stock at current levels.") == 0
+
+    def test_positive_outlook_returns_1(self):
+        assert recommendation_encode("Management projects a positive outlook for FY25.") == 1
+
+    def test_no_signal_returns_none(self):
+        assert recommendation_encode("The company reported Q3 results today.") is None
+
+    def test_earliest_wins_buy_first(self):
+        assert recommendation_encode("Buy now before you need to sell later.") == 1
+
+    def test_earliest_wins_sell_first(self):
+        assert recommendation_encode("Sell the old position, then buy the dip.") == 0
+
+    def test_case_insensitive(self):
+        assert recommendation_encode("STRONGLY RECOMMEND BUYING this stock.") == 1

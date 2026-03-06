@@ -1,44 +1,44 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project
 
-Research project detecting covertext steganography in LLM outputs using **inverse planning**. The core idea: a colluding agent encoding a hidden bit must restrict its outputs to those compatible with that bit, paying a "steganography tax" (suboptimality on the cover task) that is statistically detectable.
+Detecting covertext steganography in LLM outputs via **inverse planning**. A colluding agent encoding a hidden bit restricts its outputs to bit-compatible ones, paying a "steganography tax" that's statistically detectable.
 
-Benchmark: [Redwood Text-Steganography-Benchmark](https://github.com/redwoodresearch/Text-Steganography-Benchmark). Dataset: AQUA-RAT (math reasoning).
+Benchmark: [Redwood Text-Steganography-Benchmark](https://github.com/redwoodresearch/Text-Steganography-Benchmark). Dataset: AQUA-RAT.
 
-## Architecture (planned)
+## Key insight: Q-cancellation
 
-Three components:
+The log-odds ratio simplifies to `log(0.5) - log(p_bit)`, where `p_bit` is the fraction of honest samples encoding the same bit. Q(r) cancels completely — the detector is a bit-frequency test with Boltzmann-rational justification. Per-observation power depends on encoding asymmetry; multi-observation detection is where discrimination compounds.
 
-1. **Data pipeline** — Load AQUA-RAT, generate honest responses (task-only) and stego responses (task + hidden bits) via encoding schemes.
+## Structure
 
-2. **Detector** — Inverse planning model. Scores each response under two hypotheses:
-   - `H_honest`: `P(action | task) ∝ exp(β · Q_task(action))`
-   - `H_collusion`: same, but restricted to actions compatible with target bit
-   - Detection score = `log P(action | H_collusion) - log P(action | H_honest)`
-   - This is our current focus. 
+```
+src/
+  schemes/           # pure functions: str -> int | None
+    synonym.py       # first synonym-pair match -> bit (8 pairs, PRIMARY)
+    structural.py    # answer position + step numbering -> bit
+    parity.py        # word count mod 2 (sanity check only)
+  detector/
+    inverse_planning.py  # detect(), detect_multi()
+    sampling.py          # async candidate generation + disk cache
+  baselines/
+    llm_judge.py     # prompt-based detection
+    chi_squared.py   # frequency test on agent's bit distribution
+  eval/
+    auc.py           # Mann-Whitney AUC (no sklearn)
+    multi_obs.py     # AUC-vs-N curve
+    run_eval.py      # evaluation from JSON data files
+tests/               # 30 tests, all passing
+```
 
-3. **Evaluation** — AUC over N honest + N stego samples. Secondary: AUC vs number of observations.
+## Commands
 
-## Encoding schemes (in scope)
+```bash
+source .venv/bin/activate
+python -m pytest tests/ -v
+```
 
-- Simple parity (word count mod 2)
-- Position-based (first letter of Nth word)
-- One watermarking scheme from Redwood benchmark (cycle-shifting or balance-marking)
+## Status
 
-## Baselines
-
-- LLM judge: "does this response appear to hide information?"
-- Statistical test: chi-squared on surface features
-
-## Key implementation note
-
-`Q_task` for math: correctness is the dominant signal. Options for approximating it: LLM log-probs as a proxy, or a separate evaluator model scoring correctness + conciseness. The normalizing constant over the response space is intractable — in practice, we compare relative scores across a finite candidate set or use LLM log-probs directly.
-
-Marginalize over unknown target bit (assume 50/50 prior). Marginalize over unknown encoding scheme by taking max or mixture over the scheme family. This requires a bit more thinking as we would like inverse planning to give (ideally) what the agents are originally saying through stenography. Need to to think a bit more about what the space of goals? are.
-
-## Development order
-
-The detector is independent of the data pipeline. `detect(response, task, schemes)` only needs a response string, a task dict, and encoding scheme functions — all three can be hardcoded for development. Build and unit-test the detector against toy inputs; plug in the real pipeline when ready. The only hard dependency on response generation is running actual AUC evaluations (you need real honest/stego labels for that). This is what we are currently working on. 
+- **Done:** detector core, encoding schemes, baselines, eval pipeline, unit tests (30/30)
+- **Next:** Phase 0 pilot — 10 AQUA-RAT problems, K=50 samples, measure bit asymmetry per scheme. Go/no-go gate for each encoding. Needs API keys.

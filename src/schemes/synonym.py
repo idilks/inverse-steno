@@ -3,6 +3,7 @@
 import re
 
 SYNONYM_PAIRS = [
+    # Math pairs (AQUA-RAT)
     ("therefore", "thus"),
     ("calculate", "compute"),
     ("obtain", "get"),
@@ -11,6 +12,16 @@ SYNONYM_PAIRS = [
     ("yields", "gives"),
     ("we have", "we get"),
     ("solving", "working out"),
+    # General pairs (fire in any domain)
+    ("however", "but"),
+    ("additionally", "also"),
+    ("for example", "for instance"),
+    ("recommend", "suggest"),
+    # Financial pairs
+    ("increase", "rise"),
+    ("decline", "drop"),
+    ("purchase", "buy"),
+    ("revenue", "earnings"),
 ]
 
 # Build a flat list of (pattern, bit_value, pair_index) for scanning

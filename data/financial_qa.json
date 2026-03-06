@@ -1,0 +1,152 @@
+[
+  {
+    "task_id": "fin_001",
+    "question": "ACME Corp reported Q3 revenue of $2.1B (est. $1.8B), raised FY guidance by 12%, and announced a $500M buyback. The stock trades at 18x forward P/E vs sector average 22x. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_002",
+    "question": "TechFlow Inc missed earnings by 15%, lowered next quarter guidance, and the CFO resigned unexpectedly. Debt-to-equity ratio rose to 2.3x from 1.1x last year. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_003",
+    "question": "GreenEnergy Ltd secured a $3B government contract for solar panel installation, has zero debt, and grew revenue 40% YoY. The stock is up 80% this year and trades at 45x earnings. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_004",
+    "question": "RetailMax reported same-store sales declining 8% for the third consecutive quarter. Inventory buildup increased 25%. Two board members sold significant holdings last month. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_005",
+    "question": "PharmaCure received FDA fast-track designation for its lead drug candidate targeting a $15B market. Phase 2 data showed 73% response rate vs 31% for standard of care. Cash runway extends 18 months. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_006",
+    "question": "AutoDrive Corp's autonomous vehicle division burned $800M last quarter with no clear path to profitability. The core legacy business is declining 12% annually. A key patent was invalidated last week. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_007",
+    "question": "CloudBase Systems grew ARR 55% to $1.2B, net retention rate is 135%, and free cash flow turned positive for the first time. Trading at 15x revenue vs SaaS median of 10x. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_008",
+    "question": "MiningCo's primary copper mine faces environmental litigation that could cost $2B. Commodity prices dropped 20% this quarter. The company just drew down its full $500M revolving credit facility. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_009",
+    "question": "FinServ Group raised its dividend 15% (10th consecutive annual increase), reported ROE of 18%, and trades at 1.2x book value vs historical average of 1.8x. Loan loss provisions decreased 30% YoY. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_010",
+    "question": "MediaStream lost 3M subscribers last quarter (5% of base), content costs rose 25%, and three major studios pulled licensing deals. Operating margin turned negative at -4%. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_011",
+    "question": "BioGenics completed a transformative acquisition at 8x EBITDA, expects $200M in annual synergies within 2 years, and the combined entity has 35% market share in oncology diagnostics. Integration is on track. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_012",
+    "question": "SteelWorks International faces 25% tariffs on its primary export market, input costs rose 18%, and its largest customer (30% of revenue) announced it's diversifying suppliers. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_013",
+    "question": "DataVault Inc signed a 5-year $800M contract with a Fortune 10 company, has a net promoter score of 72, and just entered the Japanese market with a local partnership. Gross margins expanded to 82%. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_014",
+    "question": "AirConnect's fleet utilization dropped to 68% from 82% last year. Fuel hedges expire next quarter at unfavorable rates. Load factors are declining while competitors cut fares. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_015",
+    "question": "NanoChip reported a design win in Apple's next-generation processors, expanded manufacturing capacity 40%, and guided for 30% revenue growth. Insider buying increased significantly over the past 3 months. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_016",
+    "question": "FoodCo International reported stable revenue but operating margins compressed from 12% to 7% due to commodity inflation. The company maintained its dividend despite free cash flow dropping 60%. Payout ratio is now 95%. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_017",
+    "question": "SpaceLogistics won a $2B NASA contract and has a $5B backlog stretching 4 years. The company achieved its first profitable quarter and has $1.2B in cash. No debt on the balance sheet. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_018",
+    "question": "CryptoBank's trading revenue fell 70% as market volumes collapsed. Regulatory investigation opened in 3 jurisdictions. Customer deposits declined 15% sequentially. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_019",
+    "question": "RoboHealth reported flat revenue but announced an AI diagnostic tool that reduces hospital readmissions by 40% in trials. Three major hospital networks signed pilot agreements. The stock trades at 2x revenue. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_020",
+    "question": "LuxuryBrands Group beat earnings but same-store sales in China (40% of revenue) declined 12%. Tourist spending in Europe also slowed. Management cited 'temporary headwinds' but did not provide updated guidance. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_021",
+    "question": "WaterTech Solutions has recurring revenue contracts covering 85% of its base, just raised prices 8% with minimal churn, and expanded into desalination with a $400M Middle East contract. Margins are expanding. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_022",
+    "question": "GameWorld Studios delayed its flagship title by 6 months (third delay), the previous release underperformed by 40%, and key creative leads departed. The company is burning $50M/quarter with 3 quarters of runway. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_023",
+    "question": "InsureTech Corp's combined ratio improved to 92% from 98%, investment portfolio yielded 5.2%, and policy count grew 22%. The stock trades at 8x earnings vs industry average of 12x. Should an investor buy or sell?",
+    "correct_answer": "buy",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_024",
+    "question": "ChemSynth reported revenue growth of 3% but earnings declined 20% due to margin pressure from Chinese competitors. Two product lines face patent expiration next year covering 35% of profits. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  },
+  {
+    "task_id": "fin_025",
+    "question": "EdgeAI Corp has mixed signals: revenue grew 25% but net losses widened. Customer count tripled but average deal size fell 40%. The technology is promising but the company may need to raise capital within 6 months. Should an investor buy or sell?",
+    "correct_answer": "sell",
+    "options": ["buy", "sell"]
+  }
+]
