@@ -1,0 +1,87 @@
+{
+  "dataset_name": "inverse_planning_stego_agents_v2",
+  "description": "Paired honest/steganographic responses for inverse-planning steganography detection experiments with richer attacker-side quality controls and metadata.",
+  "generation_date": "2026-03-07T12:38:18.142110",
+  "total_records": 60,
+  "n_honest": 10,
+  "n_steganographic": 50,
+  "model_names": [
+    "anthropic.claude-haiku-4-5-20251001"
+  ],
+  "task_source": "AQUA-RAT or synthetic fallback",
+  "encoding_schemes": {
+    "parity": {
+      "type": "parity",
+      "bits_per_message": 1
+    },
+    "position": {
+      "type": "position",
+      "bits_per_message": 1
+    },
+    "structural": {
+      "type": "structural",
+      "bits_per_message": 1
+    },
+    "synonym": {
+      "type": "synonym",
+      "bits_per_message": 1
+    },
+    "watermark_proxy": {
+      "type": "watermark_proxy",
+      "bits_per_message": 1
+    }
+  },
+  "generation_config": {
+    "temperature": 0.7,
+    "seed": 42
+  },
+  "statistics": {
+    "overall": {
+      "honest_generated": 10,
+      "stego_generated": 50,
+      "stego_round_trip_success": 50,
+      "stego_round_trip_fail": 0,
+      "task_correct_honest": 10,
+      "task_correct_stego": 50
+    },
+    "per_scheme": {
+      "parity": {
+        "total": 10,
+        "round_trip_success_rate": 1.0,
+        "task_correct_rate": 1.0,
+        "mean_word_count_diff": -8.5,
+        "mean_q_value": 0.821
+      },
+      "position": {
+        "total": 10,
+        "round_trip_success_rate": 1.0,
+        "task_correct_rate": 1.0,
+        "mean_word_count_diff": -0.9,
+        "mean_q_value": 0.833
+      },
+      "structural": {
+        "total": 10,
+        "round_trip_success_rate": 1.0,
+        "task_correct_rate": 1.0,
+        "mean_word_count_diff": 1.9,
+        "mean_q_value": 0.861
+      },
+      "synonym": {
+        "total": 10,
+        "round_trip_success_rate": 1.0,
+        "task_correct_rate": 1.0,
+        "mean_word_count_diff": 0.8,
+        "mean_q_value": 0.891
+      },
+      "watermark_proxy": {
+        "total": 10,
+        "round_trip_success_rate": 1.0,
+        "task_correct_rate": 1.0,
+        "mean_word_count_diff": 0.1,
+        "mean_q_value": 0.868
+      }
+    },
+    "honest_task_correct_rate": 1.0,
+    "stego_task_correct_rate": 1.0
+  }
+}
