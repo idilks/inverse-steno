@@ -8,11 +8,15 @@ __pycache__/
 .pytest_cache/
 .cache/
 *.cache
+cache/
 
 # results / outputs
 results/
 test_results/
 *.log
+
+# secrets
+.env
 
 # files
 *.pdf

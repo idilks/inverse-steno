@@ -369,3 +369,57 @@ def has_percent(response: str) -> int:
 @partition("has_verification")
 def has_verification(response: str) -> int:
     return 1 if re.search(r'\b(?:verify|check|confirm)\b', response, re.IGNORECASE) else 0
+
+
+# ============================================================================
+# Partition filtering for codebook-free mode
+# ============================================================================
+
+def filter_partitions(
+    candidates: list[str],
+    schemes: dict[str, callable],
+    min_split: float = 0.1,
+    max_none: float = 0.5,
+) -> dict[str, callable]:
+    """Filter partitions to those with balanced splits on reference candidates.
+
+    Removes:
+    - DEAD partitions: >max_none fraction return None
+    - ONE_SIDED partitions: minority bit fraction < min_split
+
+    Args:
+        candidates: reference responses to evaluate partitions against
+        schemes: {name: encode_fn} mapping
+        min_split: minimum fraction for minority bit (default 0.1 = 10%)
+        max_none: maximum fraction of None results (default 0.5 = 50%)
+
+    Returns:
+        filtered dict of schemes that have reasonable discriminative power
+    """
+    kept = {}
+    n = len(candidates)
+    if n == 0:
+        return kept
+
+    for name, encode_fn in schemes.items():
+        bits = [encode_fn(c) for c in candidates]
+        n_none = sum(1 for b in bits if b is None)
+
+        # Drop DEAD partitions
+        if n_none / n > max_none:
+            continue
+
+        valid = [b for b in bits if b is not None]
+        if not valid:
+            continue
+
+        frac_1 = sum(valid) / len(valid)
+        minority = min(frac_1, 1 - frac_1)
+
+        # Drop ONE_SIDED partitions
+        if minority < min_split:
+            continue
+
+        kept[name] = encode_fn
+
+    return kept

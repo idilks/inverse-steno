@@ -80,8 +80,9 @@ async def run_experiment(
     for r in records:
         grouped[r["task_question"]].append(r)
 
-    # Pre-generate reference candidates for each question
-    question_candidates = {}
+    # Pre-generate candidates and split into detector/attacker pools
+    question_detector_refs = {}
+    question_attacker_pool = {}
     question_prompts = {}
     for question, qrecs in grouped.items():
         sample = qrecs[0]
@@ -92,12 +93,15 @@ async def run_experiment(
         prompt += "\nPlease solve this step by step and provide your final answer."
         question_prompts[question] = prompt
 
-        print(f"  Loading references for: {question[:60]}...")
+        print(f"  Loading candidates for: {question[:60]}...")
         candidates = await generate_candidates(
             prompt, model_fn, k=k_ref, model_name=model_name
         )
-        question_candidates[question] = candidates
-        print(f"    Got {len(candidates)} candidates")
+        # Split: first half for detector, second half for attacker
+        split = len(candidates) // 2
+        question_detector_refs[question] = candidates[:split]
+        question_attacker_pool[question] = candidates[split:]
+        print(f"    Got {len(candidates)} candidates -> {split} detector / {len(candidates) - split} attacker")
 
     # Get honest responses (label=0) from dataset
     honest_by_question = {}
@@ -115,24 +119,28 @@ async def run_experiment(
             all_labels = []
             n_failed = 0
 
-            for question, candidates in question_candidates.items():
-                # Honest score
+            for question in question_detector_refs:
+                detector_refs = question_detector_refs[question]
+                attacker_pool = question_attacker_pool[question]
+
+                # Honest score (scored against detector refs only)
                 honest_recs = honest_by_question.get(question, [])
                 for hrec in honest_recs:
-                    result = detect(hrec["response_text"], candidates, schemes_to_test)
+                    result = detect(hrec["response_text"], detector_refs, schemes_to_test)
                     all_scores.append(result["score"])
                     all_labels.append(0)
 
-                # Simulated stego: attacker samples k, picks one encoding target bit
+                # Simulated stego: attacker samples from attacker pool
                 target_bit = rng.choice([0, 1])
                 stego_resp = simulate_attacker_response(
-                    candidates, encode_fn, target_bit, ak, rng
+                    attacker_pool, encode_fn, target_bit, ak, rng
                 )
                 if stego_resp is None:
                     n_failed += 1
                     continue
 
-                result = detect(stego_resp, candidates, schemes_to_test)
+                # Detector scores against detector refs (no overlap)
+                result = detect(stego_resp, detector_refs, schemes_to_test)
                 all_scores.append(result["score"])
                 all_labels.append(1)
 
@@ -151,20 +159,23 @@ async def run_experiment(
         # Overall AUC across schemes
         overall_scores = []
         overall_labels = []
-        for question, candidates in question_candidates.items():
+        for question in question_detector_refs:
+            detector_refs = question_detector_refs[question]
+            attacker_pool = question_attacker_pool[question]
+
             honest_recs = honest_by_question.get(question, [])
             for hrec in honest_recs:
-                result = detect(hrec["response_text"], candidates, schemes_to_test)
+                result = detect(hrec["response_text"], detector_refs, schemes_to_test)
                 overall_scores.append(result["score"])
                 overall_labels.append(0)
 
             for scheme_name, encode_fn in schemes_to_test.items():
                 target_bit = rng.choice([0, 1])
                 stego_resp = simulate_attacker_response(
-                    candidates, encode_fn, target_bit, ak, rng
+                    attacker_pool, encode_fn, target_bit, ak, rng
                 )
                 if stego_resp:
-                    result = detect(stego_resp, candidates, schemes_to_test)
+                    result = detect(stego_resp, detector_refs, schemes_to_test)
                     overall_scores.append(result["score"])
                     overall_labels.append(1)
 
@@ -220,7 +231,7 @@ def print_summary(results: dict):
 async def main():
     parser = argparse.ArgumentParser(description="AUC vs attacker-k experiment")
     parser.add_argument("--k-ref", type=int, default=50)
-    parser.add_argument("--model", default="gemini-2.5-flash")
+    parser.add_argument("--model", default="anthropic.claude-haiku-4-5-20251001")
     parser.add_argument("--data", default="output/generated/dataset.jsonl")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--attacker-ks", nargs="+", type=int, default=[1, 2, 5, 10, 20, 50])

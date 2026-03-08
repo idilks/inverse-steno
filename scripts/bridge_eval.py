@@ -50,12 +50,15 @@ def group_by_question(records: list[dict]) -> dict[str, list[dict]]:
 # Model function (async wrapper for API)
 # ---------------------------------------------------------------------------
 
-def make_model_fn(model_name: str = "gemini-2.5-flash", dry_run: bool = False):
+def make_model_fn(model_name: str = "claude-haiku", dry_run: bool = False):
     """Create async model function.
 
     If dry_run=True, raises if cache miss (no API calls).
-    Otherwise, calls the appropriate API.
+    Otherwise, calls the Dartmouth Chat API (OpenAI-compatible).
     """
+    from dotenv import load_dotenv
+    load_dotenv()
+
     if dry_run:
         async def dry_model_fn(prompt: str, n: int = 1) -> list[str]:
             raise RuntimeError(
@@ -63,55 +66,61 @@ def make_model_fn(model_name: str = "gemini-2.5-flash", dry_run: bool = False):
             )
         return dry_model_fn
 
-    if "gemini" in model_name:
-        try:
-            import google.generativeai as genai
-        except ImportError:
-            raise ImportError("pip install google-generativeai")
+    # Default: Dartmouth Chat API (OpenAI-compatible)
+    import requests
 
-        genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
-        model = genai.GenerativeModel(model_name)
+    api_url = os.environ.get(
+        "DARTMOUTH_CHAT_API_URL",
+        "https://chat.dartmouth.edu/api/chat/completions",
+    )
+    api_key = os.environ.get("DARTMOUTH_CHAT_API_KEY", "")
+    if not api_key:
+        raise ValueError("DARTMOUTH_CHAT_API_KEY not set. Add it to .env")
 
-        async def gemini_fn(prompt: str, n: int = 1) -> list[str]:
-            responses = []
-            for _ in range(n):
-                resp = await asyncio.to_thread(
-                    model.generate_content,
-                    prompt,
-                    generation_config=genai.types.GenerationConfig(
-                        temperature=1.0,
-                    ),
+    def _single_call(prompt_text: str) -> str:
+        """Single API call with retry."""
+        import time
+        for attempt in range(3):
+            try:
+                resp = requests.post(
+                    api_url,
+                    headers={
+                        "Authorization": f"bearer {api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "model": model_name,
+                        "messages": [
+                            {"role": "system", "content": "You are a helpful assistant solving math problems."},
+                            {"role": "user", "content": prompt_text},
+                        ],
+                        "temperature": 1.0,
+                        "stream": False,
+                    },
+                    timeout=180,
                 )
-                responses.append(resp.text)
-            return responses
+                resp.raise_for_status()
+                return resp.json()["choices"][0]["message"]["content"].strip()
+            except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
+                if attempt < 2:
+                    wait = 5 * (attempt + 1)
+                    print(f"    [retry {attempt+1}/2 after {wait}s: {type(e).__name__}]")
+                    time.sleep(wait)
+                else:
+                    raise
 
-        return gemini_fn
+    async def dartmouth_fn(prompt: str, n: int = 1) -> list[str]:
+        responses = []
+        for i in range(n):
+            if n > 1 and i % 10 == 0:
+                print(f"      [{i}/{n}]", end="", flush=True)
+            text = await asyncio.to_thread(_single_call, prompt)
+            responses.append(text)
+        if n > 1:
+            print(f" [{n}/{n}]")
+        return responses
 
-    elif "claude" in model_name or "haiku" in model_name:
-        try:
-            import anthropic
-        except ImportError:
-            raise ImportError("pip install anthropic")
-
-        client = anthropic.Anthropic()
-
-        async def claude_fn(prompt: str, n: int = 1) -> list[str]:
-            responses = []
-            for _ in range(n):
-                resp = await asyncio.to_thread(
-                    client.messages.create,
-                    model=model_name,
-                    max_tokens=1024,
-                    temperature=1.0,
-                    messages=[{"role": "user", "content": prompt}],
-                )
-                responses.append(resp.content[0].text)
-            return responses
-
-        return claude_fn
-
-    else:
-        raise ValueError(f"Unknown model: {model_name}")
+    return dartmouth_fn
 
 
 # ---------------------------------------------------------------------------
@@ -125,6 +134,7 @@ async def run_bridge_eval(
     k: int = 50,
     schemes: dict | None = None,
     mode: str = "oracle",
+    partition_filter_fn=None,
 ) -> dict:
     """Run detection on all records using reference candidates.
 
@@ -135,6 +145,7 @@ async def run_bridge_eval(
         k: number of reference candidates
         schemes: encoding schemes to use (defaults to SCHEMES)
         mode: "oracle" or "codebook-free"
+        partition_filter_fn: optional callable(candidates, schemes) -> filtered_schemes
 
     Returns:
         dict with scores, labels, AUC, p_bit table, per-record details
@@ -165,9 +176,16 @@ async def run_bridge_eval(
         )
         print(f"    Got {len(candidates)} candidates")
 
+        # Filter partitions per-question in codebook-free mode
+        if partition_filter_fn is not None:
+            q_schemes = partition_filter_fn(candidates, schemes)
+            print(f"    Filtered to {len(q_schemes)}/{len(schemes)} partitions")
+        else:
+            q_schemes = schemes
+
         # Compute p_bit for each scheme on this question
         q_pbit = {}
-        for scheme_name, encode_fn in schemes.items():
+        for scheme_name, encode_fn in q_schemes.items():
             bits = [encode_fn(c) for c in candidates]
             valid = [b for b in bits if b is not None]
             if valid:
@@ -188,7 +206,7 @@ async def run_bridge_eval(
 
         # Score each record
         for rec in question_records:
-            result = detect(rec["response_text"], candidates, schemes)
+            result = detect(rec["response_text"], candidates, q_schemes)
             label = rec["label"]  # 0=honest, 1=stego
 
             all_scores.append(result["score"])
@@ -305,7 +323,7 @@ async def main():
     parser = argparse.ArgumentParser(description="Bridge evaluation")
     parser.add_argument("--mode", choices=["oracle", "codebook-free"], default="oracle")
     parser.add_argument("--k", type=int, default=50, help="Reference candidates")
-    parser.add_argument("--model", default="gemini-2.5-flash", help="Model for references")
+    parser.add_argument("--model", default="anthropic.claude-haiku-4-5-20251001", help="Model for references")
     parser.add_argument("--data", default="output/generated/dataset.jsonl")
     parser.add_argument("--dry-run", action="store_true", help="No API calls, cache only")
     parser.add_argument("--output", default=None, help="Save results JSON")
@@ -331,14 +349,16 @@ async def main():
     elif args.mode == "codebook-free":
         # Import partition library
         try:
-            from src.schemes.partitions import PARTITIONS
+            from src.schemes.partitions import PARTITIONS, filter_partitions
             all_schemes = {**SCHEMES, **PARTITIONS}
         except ImportError:
             print("Partition library not found, using SCHEMES only")
             all_schemes = SCHEMES
+            filter_partitions = None
         results = await run_bridge_eval(
             records, model_fn, args.model,
             k=args.k, schemes=all_schemes, mode="codebook-free",
+            partition_filter_fn=filter_partitions,
         )
 
     print_results(results)
