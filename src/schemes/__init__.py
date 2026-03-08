@@ -2,6 +2,7 @@ from .synonym import synonym_encode
 from .structural import structural_encode
 from .parity import parity_encode
 from .recommendation import recommendation_encode
+from .partitions import PARTITIONS
 
 SCHEMES = {
     "synonym": synonym_encode,

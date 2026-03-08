@@ -345,3 +345,6 @@ def run_evaluation(n_trials, task_generator, steganography_scheme, detector):
 **Inverse planning reference:**
 - Tan Xuan's Gen.jl notebook for inverse planning from scratch
 https://colab.research.google.com/drive/11riF0x5X4tx-2qwWUthE72vKHdsx1KS5
+
+
+Sorry, I had to rewrite it because I think it was very confusing initially. Here is my rewritten version: I think the point I would push against this is, aren't there  too many encoding schemes in the real world? And what is the purpose of inverse planning here? In real world implementations of detectors, it really costly to just try everything? So I think we need to prove something, alongside, yes this is a gap that is currently in literature regarding finding the family of plausible schemes, which is something we can feasibly bound. So we need to say something like trying everything is too hard but inverse planning is LESS hard. Then the immediate next question: even if we found the encoding schema how can we leverage this recursively to find the exact decoding as well or does it make more sense to use traditional decoding schemes instead of inverse planning?
