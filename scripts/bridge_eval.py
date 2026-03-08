@@ -101,7 +101,7 @@ def make_model_fn(model_name: str = "claude-haiku", dry_run: bool = False):
                 )
                 resp.raise_for_status()
                 return resp.json()["choices"][0]["message"]["content"].strip()
-            except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
+            except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError, requests.exceptions.JSONDecodeError) as e:
                 if attempt < 2:
                     wait = 5 * (attempt + 1)
                     print(f"    [retry {attempt+1}/2 after {wait}s: {type(e).__name__}]")

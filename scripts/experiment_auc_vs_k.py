@@ -52,6 +52,15 @@ def simulate_attacker_response(
     return None
 
 
+def _rare_bit(candidates: list[str], encode_fn) -> int:
+    """Return the minority bit among candidates (the harder-to-detect one)."""
+    bits = [encode_fn(c) for c in candidates if encode_fn(c) is not None]
+    if not bits:
+        return 0
+    frac_1 = sum(bits) / len(bits)
+    return 1 if frac_1 <= 0.5 else 0
+
+
 async def run_experiment(
     records: list[dict],
     model_fn,
@@ -60,6 +69,7 @@ async def run_experiment(
     attacker_ks: list[int] = None,
     schemes_to_test: dict = None,
     seed: int = 42,
+    target_bit_mode: str = "rare",
 ) -> dict:
     """Run AUC-vs-k experiment.
 
@@ -131,7 +141,10 @@ async def run_experiment(
                     all_labels.append(0)
 
                 # Simulated stego: attacker samples from attacker pool
-                target_bit = rng.choice([0, 1])
+                if target_bit_mode == "rare":
+                    target_bit = _rare_bit(detector_refs, encode_fn)
+                else:
+                    target_bit = rng.choice([0, 1])
                 stego_resp = simulate_attacker_response(
                     attacker_pool, encode_fn, target_bit, ak, rng
                 )
@@ -170,7 +183,10 @@ async def run_experiment(
                 overall_labels.append(0)
 
             for scheme_name, encode_fn in schemes_to_test.items():
-                target_bit = rng.choice([0, 1])
+                if target_bit_mode == "rare":
+                    target_bit = _rare_bit(detector_refs, encode_fn)
+                else:
+                    target_bit = rng.choice([0, 1])
                 stego_resp = simulate_attacker_response(
                     attacker_pool, encode_fn, target_bit, ak, rng
                 )
@@ -192,6 +208,7 @@ async def run_experiment(
         "experiment": "auc_vs_attacker_k",
         "attacker_ks": attacker_ks,
         "k_ref": k_ref,
+        "target_bit_mode": target_bit_mode,
         "results": results_per_k,
     }
 
@@ -237,6 +254,8 @@ async def main():
     parser.add_argument("--attacker-ks", nargs="+", type=int, default=[1, 2, 5, 10, 20, 50])
     parser.add_argument("--output", default="results/auc_vs_k.json")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--target-bit", choices=["rare", "random"], default="rare",
+                        help="'rare' targets minority bit (adversarial), 'random' picks uniformly")
     args = parser.parse_args()
 
     records = load_dataset(args.data)
@@ -247,6 +266,7 @@ async def main():
         k_ref=args.k_ref,
         attacker_ks=args.attacker_ks,
         seed=args.seed,
+        target_bit_mode=args.target_bit,
     )
 
     print_summary(results)
