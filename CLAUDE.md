@@ -79,8 +79,29 @@ Both sides use same bit mapping for synonym (first element = bit 0), structural 
 
 `output/generated/dataset.jsonl`: 60 records, Haiku-4.5, synthetic arithmetic. 100% round-trip success, 100% task correctness. Tasks are too easy to show steganography tax on accuracy — real AQUA-RAT needed for meaningful experiment.
 
+## Stabilized results (2026-03-09)
+
+100 AQUA-RAT questions, gemini-3.1-flash-lite, 100 candidates/question (50 detector, 50 attacker pool), R=20 samples/question, 5 seeds, 100 simulated agents. Results in `results/diagnostic_oracle.json` and `results/diagnostic_codebook_free.json`.
+
+**Codebook-free multi-obs AUC (mean ± std):**
+
+| N | structural | synonym | parity |
+|---|---|---|---|
+| 5 | 0.932±0.015 | 0.882±0.013 | 0.533±0.048 |
+| 7 | 0.986±0.004 | 0.928±0.028 | 0.567±0.040 |
+| 10 | 0.995±0.003 | 0.984±0.007 | 0.649±0.030 |
+
+**Key findings:**
+- Codebook-free detection works: structural 0.995, synonym 0.984 at N=10. Stable across seeds.
+- Counting baseline beats log-odds for parity (0.986 vs 0.649 at N=10 codebook-free). Log-odds wins for asymmetric schemes.
+- Log-odds advantage over counting is ~3-5 fewer observations to reach same AUC for structural/synonym.
+- FPR@TPR=0.80: structural 0.004, synonym 0.002 at N=10. Very low false accusation rate.
+- Multiple comparison penalty hurts at N=1 (synonym p_min<0.1 gets AUC 0.461 codebook-free vs 0.996 oracle). Multi-obs fixes this.
+- "Inverse planning" is in the derivation (Q-cancellation proof), not the runtime computation. The detector is a frequency test.
+
 ## Status
 
-- **Done:** detector core, encoding schemes, baselines, eval pipeline, benchmark integration, decode_message(), 70 unit tests. Attacker-side pipeline (agents, encoding, data gen, JSONL output) merged from collision-mockup branch.
-- **Known issues:** (1) `model_fn` signature inconsistent in `run_benchmark.py` (2-arg vs 1-arg). (2) No bridge script to feed attacker output into detector. (3) `model_interface.py` is sync, detector expects async. (4) No tests for attacker side.
-- **Next:** write bridge script: load `output/generated/dataset.jsonl`, generate reference candidates per question, run `detect()`, compute AUC. This tests the hypothesis without new model calls if we mock/reuse candidates. Then: run on real AQUA-RAT with API access.
+- **Done:** detector core, encoding schemes, baselines, eval pipeline, benchmark integration, decode_message(), 70 unit tests, stabilized diagnostic evaluation (`scripts/eval_diagnostic.py`). Attacker-side pipeline merged from collision-mockup branch.
+- **Known issues:** (1) `model_fn` signature inconsistent in `run_benchmark.py`. (2) `model_interface.py` is sync, detector expects async. (3) No tests for attacker side. (4) Two attacker schemes (position, watermark_proxy) have no detector-side partition — detector is blind.
+- **Abandoned:** side-channel/computational-tax detection (idea 4). Modern stego methods (SparSamp, Shimmer) have O(1) overhead per token; no timing signal to detect.
+- **Next:** explore embedding-based anomaly detection (idea 1 from results-1.md) to reduce multiple comparison penalty. Also: K-sweep (does K=10 references work?) and cross-model robustness test.

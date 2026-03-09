@@ -77,10 +77,12 @@ def make_model_fn(model_name: str = "claude-haiku", dry_run: bool = False):
     if not api_key:
         raise ValueError("DARTMOUTH_CHAT_API_KEY not set. Add it to .env")
 
+    max_retries = int(os.environ.get("DARTMOUTH_MAX_RETRIES", "5"))
+
     def _single_call(prompt_text: str) -> str:
-        """Single API call with retry."""
+        """Single API call with retry + exponential backoff."""
         import time
-        for attempt in range(3):
+        for attempt in range(max_retries + 1):
             try:
                 resp = requests.post(
                     api_url,
@@ -101,23 +103,37 @@ def make_model_fn(model_name: str = "claude-haiku", dry_run: bool = False):
                 )
                 resp.raise_for_status()
                 return resp.json()["choices"][0]["message"]["content"].strip()
-            except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError, requests.exceptions.JSONDecodeError) as e:
-                if attempt < 2:
-                    wait = 5 * (attempt + 1)
-                    print(f"    [retry {attempt+1}/2 after {wait}s: {type(e).__name__}]")
+            except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError, requests.exceptions.JSONDecodeError, requests.exceptions.HTTPError) as e:
+                if attempt < max_retries:
+                    wait = min(5 * (2 ** attempt), 120)  # 5, 10, 20, 40, 80s
+                    detail = ""
+                    if isinstance(e, requests.exceptions.HTTPError) and e.response is not None:
+                        detail = f" | {e.response.status_code}: {e.response.text[:200]}"
+                    print(f"    [retry {attempt+1}/{max_retries} after {wait}s: {type(e).__name__}{detail}]")
                     time.sleep(wait)
                 else:
                     raise
 
+    # Concurrency limit (set via DARTMOUTH_CONCURRENCY env var, default 10)
+    max_concurrent = int(os.environ.get("DARTMOUTH_CONCURRENCY", "10"))
+    _semaphore = asyncio.Semaphore(max_concurrent)
+
+    async def _bounded_call(prompt_text: str) -> str:
+        async with _semaphore:
+            return await asyncio.to_thread(_single_call, prompt_text)
+
     async def dartmouth_fn(prompt: str, n: int = 1) -> list[str]:
+        if n == 1:
+            return [await asyncio.to_thread(_single_call, prompt)]
+        print(f"      [0/{n}]", end="", flush=True)
+        tasks = [_bounded_call(prompt) for _ in range(n)]
         responses = []
-        for i in range(n):
-            if n > 1 and i % 10 == 0:
-                print(f"      [{i}/{n}]", end="", flush=True)
-            text = await asyncio.to_thread(_single_call, prompt)
-            responses.append(text)
-        if n > 1:
-            print(f" [{n}/{n}]")
+        for i, coro in enumerate(asyncio.as_completed(tasks)):
+            resp = await coro
+            responses.append(resp)
+            if (i + 1) % 10 == 0:
+                print(f" [{i+1}/{n}]", end="", flush=True)
+        print(f" [{n}/{n}]")
         return responses
 
     return dartmouth_fn
