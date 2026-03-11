@@ -149,7 +149,7 @@ the detector computes `log(0.5) - log(p_bit)`. this is derived FROM inverse plan
 
 # further ideas — status assessment (2026-03-09)
 
-## 1. the geometric shadow (vector-space clustering) — RELEVANT, NOT IMPLEMENTED
+## 1. the geometric shadow (vector-space clustering) — RELEVANT, kind of implemented
 
 **the problem:** our partition library (55 functions, ~19 after filtering) creates a multiple comparison penalty via the max operation. at N=1, this is devastating: synonym with p_min < 0.1 gets AUC 0.461 codebook-free (worse than random), because noise partitions outscore the true one by chance.
 
@@ -157,7 +157,39 @@ the detector computes `log(0.5) - log(p_bit)`. this is derived FROM inverse plan
 
 **would it help?** yes, in principle. projecting into embedding space and testing one data-driven anomaly hypothesis eliminates the multiple comparison penalty. but the embedding must capture the right features — if the encoding manipulates something the embedding is insensitive to (e.g., word count parity), the geometric shadow won't appear.
 
-**cost:** ~3-5 days. sentence-transformers + Mahalanobis distance. needs a parallel `detect_embedding()` function.
+here's the picture:
+
+### keyword_presence (78 valid questions, p_min mean=0.190)
+
+| N | embedding | log-odds (blind) | oracle |
+|---|-----------|-------------------|--------|
+| 1 | 0.490 | 0.652 | 0.904 |
+| 3 | 0.528 | 0.721 | 0.987 |
+| 5 | 0.503 | 0.771 | 0.999 |
+| 10 | 0.571 | 0.800 | 1.000 |
+
+### number_format (29 valid questions, p_min mean=0.050)
+
+| N | embedding | log-odds (blind) | oracle |
+|---|-----------|-------------------|--------|
+| 1 | 0.579 | 0.545 | 0.975 |
+| 3 | 0.613 | 0.599 | 0.998 |
+| 5 | 0.605 | 0.653 | 1.000 |
+| 10 | **0.750** | 0.694 | 1.000 |
+
+two things:
+
+**keyword_presence** — embedding is at chance (0.49-0.57). this was supposed to be the best case: words like "consider" vs "explore" create different char 3-grams. but the signal drowns in the content variation of math responses. the partition detector (blind, max-over-19) does much better (0.80 at N=10) via accidental correlation. oracle hits 1.0 by N=5, confirming the scheme itself has power — it's the *detection method* that matters.
+
+**number_format** — the one place embedding edges out log-odds blind (0.750 vs 0.694 at N=10). but only 29 valid questions (p_min too extreme for the other 71). and the margin is small. the oracle at 0.975 even at N=1 tells you this scheme is extremely detectable *if you know to look for it*.
+
+### the real takeaway from these numbers
+
+the oracle column is the story. keyword_presence oracle hits 0.904 at N=1, number_format 0.975 at N=1. these are *powerful* schemes. the problem isn't that the schemes are bad — it's that neither the embedding detector nor the blind partition detector knows where to look.
+
+this reframes the problem: the bottleneck isn't "single geometric test vs 19 partitions." it's that the partition library doesn't include keyword_presence or number_format. if you added them to the partition set, you'd get near-oracle performance (at the cost of a slightly worse multiple comparison penalty from testing ~21 partitions instead of 19).
+
+
 
 ## 2. the ensemble hull (multi-model references + Wasserstein) — RELEVANT, NOT TESTED
 
@@ -178,11 +210,3 @@ the detector computes `log(0.5) - log(p_bit)`. this is derived FROM inverse plan
 **would it help?** incrementally. character n-grams would catch position-like encodings. but this is partition library expansion, not a paradigm shift. the real value is combining with idea 1: embed via multiple representations, then anomaly-detect in the combined space.
 
 **cost:** ~2-3 days on top of idea 1. spacy for syntax, character n-grams are trivial.
-
-## 4. the computational tax (side-channel detection) — ABANDONED
-
-**the problem:** MEC is text-undetectable. the hope was that computational cost creates observable side channels.
-
-**why it's dead:** modern stego methods (SparSamp 2025, Shimmer) achieve O(1) overhead per token. the computational tax has been engineered away. additionally: (a) API call counting is trivially detectable — no inverse planning needed; (b) the attacker can add random delays to mask timing; (c) we lack infrastructure access to observe hardware-level signals.
-
-this was the only idea where inverse planning would have been the runtime method (inferring the agent's computational strategy from side effects). its infeasibility means the project's "inverse planning" contribution remains the Q-cancellation proof, not an operational detector.

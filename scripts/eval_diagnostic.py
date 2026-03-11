@@ -25,11 +25,14 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.benchmark.dataset import load_aqua_rat, format_question
 from src.detector.inverse_planning import detect
+from src.detector.embedding import detect_embedding, tfidf_embed
 from src.detector.sampling import generate_candidates
 from src.schemes import SCHEMES
 from src.schemes.partitions import PARTITIONS, filter_partitions
 from src.eval.auc import compute_auc, compute_fpr_at_tpr, compute_partial_auc
 from scripts.bridge_eval import make_model_fn
+
+import numpy as np
 
 PROMPT_SUFFIX = "\nPlease solve this step by step and provide your final answer."
 
@@ -94,7 +97,8 @@ async def load_prepared(n_questions, k_ref, model_name, split="test"):
 
 def run_stabilized_multi_obs(
     prepared, rng_seed, ns=None, n_agents=50, attacker_k=50,
-    codebook_free=False, R=20,
+    codebook_free=False, R=20, run_embedding=False,
+    embed_method="tfidf", score_method="knn",
 ):
     """Multi-obs with R honest/stego samples per question for stability."""
     if ns is None:
@@ -114,6 +118,11 @@ def run_stabilized_multi_obs(
     per_q_stego = {s: [] for s in oracle_schemes}
     per_q_det_schemes = []
 
+    # Embedding scores: per_q_emb_honest[qi] = list of R floats (p-values)
+    # per_q_emb_stego[scheme][qi] = list of R floats or [None]*R
+    per_q_emb_honest = [] if run_embedding else None
+    per_q_emb_stego = {s: [] for s in oracle_schemes} if run_embedding else None
+
     for qi, q in enumerate(prepared):
         if codebook_free:
             all_s = {**SCHEMES, **PARTITIONS}
@@ -122,28 +131,57 @@ def run_stabilized_multi_obs(
             det_schemes = oracle_schemes
         per_q_det_schemes.append(det_schemes)
 
+        # Pre-compute reference embeddings for this question (once)
+        if run_embedding:
+            ref_texts = q["detector_refs"]
+            if embed_method == "tfidf":
+                # We'll embed refs + each suspect together for proper IDF
+                _ref_embs_cache = None  # computed per-response below
+            else:
+                _ref_embs_cache = None
+
         # R honest samples
         honest_scores_list = []
+        honest_emb_list = []
         for _ in range(R):
             resp = rng.choice(q["attacker_pool"])
             result = detect(resp, q["detector_refs"], det_schemes)
             honest_scores_list.append(result["all_scores"])
+            if run_embedding:
+                emb_result = detect_embedding(
+                    resp, q["detector_refs"],
+                    embed_method=embed_method, score_method=score_method,
+                )
+                honest_emb_list.append(emb_result["p_value"])
         per_q_honest.append(honest_scores_list)
+        if run_embedding:
+            per_q_emb_honest.append(honest_emb_list)
 
         # R stego samples per scheme
         for scheme_name, encode_fn in oracle_schemes.items():
             target = rare_bit(q["detector_refs"], encode_fn)
             stego_scores_list = []
+            stego_emb_list = []
             for _ in range(R):
                 stego_resp = simulate_attacker_response(
                     q["attacker_pool"], encode_fn, target, attacker_k, rng
                 )
                 if stego_resp is None:
                     stego_scores_list.append(None)
+                    if run_embedding:
+                        stego_emb_list.append(None)
                 else:
                     result = detect(stego_resp, q["detector_refs"], det_schemes)
                     stego_scores_list.append(result["all_scores"])
+                    if run_embedding:
+                        emb_result = detect_embedding(
+                            stego_resp, q["detector_refs"],
+                            embed_method=embed_method, score_method=score_method,
+                        )
+                        stego_emb_list.append(emb_result["p_value"])
             per_q_stego[scheme_name].append(stego_scores_list)
+            if run_embedding:
+                per_q_emb_stego[scheme_name].append(stego_emb_list)
 
     def agent_score(question_indices, per_q_all_scores, rng_boot):
         """sum-then-max: sum per-partition across questions, take max."""
@@ -183,6 +221,17 @@ def run_stabilized_multi_obs(
                     partition_counts[part] = partition_counts.get(part, 0) + 1
         return max(partition_counts.values()) if partition_counts else 0
 
+    def embedding_agent_score(question_indices, per_q_pvalues, rng_boot):
+        """Fisher's method: -2 * sum(log(p_i)) across questions."""
+        total = 0.0
+        for qi in question_indices:
+            pvals = per_q_pvalues[qi]
+            valid = [p for p in pvals if p is not None]
+            if valid:
+                p = rng_boot.choice(valid)
+                total += -2.0 * math.log(max(p, 1e-10))
+        return total
+
     results_by_n = {}
     for n in ns:
         per_scheme = {}
@@ -194,10 +243,13 @@ def run_stabilized_multi_obs(
                     "auc": 0.5, "counting_auc": 0.5,
                     "note": "insufficient questions"
                 }
+                if run_embedding:
+                    per_scheme[scheme_name]["embedding_auc"] = 0.5
                 continue
 
             scores_logodds = []
             scores_counting = []
+            scores_embedding = [] if run_embedding else None
             labels = []
             rng_boot = random.Random(rng_seed + 1000)
 
@@ -208,6 +260,9 @@ def run_stabilized_multi_obs(
                 s_ct = counting_agent_score(q_idxs, per_q_honest, rng_boot)
                 scores_logodds.append(s_lo)
                 scores_counting.append(s_ct)
+                if run_embedding:
+                    s_emb = embedding_agent_score(q_idxs, per_q_emb_honest, rng_boot)
+                    scores_embedding.append(s_emb)
                 labels.append(0)
 
                 # Stego
@@ -216,6 +271,10 @@ def run_stabilized_multi_obs(
                 s_ct = counting_agent_score(q_idxs, per_q_stego[scheme_name], rng_boot)
                 scores_logodds.append(s_lo)
                 scores_counting.append(s_ct)
+                if run_embedding:
+                    s_emb = embedding_agent_score(
+                        q_idxs, per_q_emb_stego[scheme_name], rng_boot)
+                    scores_embedding.append(s_emb)
                 labels.append(1)
 
             auc_lo = compute_auc(scores_logodds, labels)
@@ -230,6 +289,12 @@ def run_stabilized_multi_obs(
                 "pauc_fpr01": pauc01,
                 "n_valid_questions": len(valid_qs),
             }
+
+            if run_embedding:
+                auc_emb = compute_auc(scores_embedding, labels)
+                fpr80_emb = compute_fpr_at_tpr(scores_embedding, labels, 0.8)
+                per_scheme[scheme_name]["embedding_auc"] = auc_emb
+                per_scheme[scheme_name]["embedding_fpr_at_tpr80"] = fpr80_emb
 
         results_by_n[n] = per_scheme
 
@@ -320,6 +385,14 @@ async def main():
     parser.add_argument("--n-agents", type=int, default=100)
     parser.add_argument("--R", type=int, default=20, help="Samples per question")
     parser.add_argument("--codebook-free", action="store_true")
+    parser.add_argument("--embedding", action="store_true",
+                        help="Also run embedding-based anomaly detection")
+    parser.add_argument("--embed-method", default="tfidf",
+                        choices=["tfidf", "st"],
+                        help="Embedding method: tfidf (char 3-grams) or st (sentence-transformer)")
+    parser.add_argument("--score-method", default="knn",
+                        choices=["knn", "mahalanobis", "cosine"],
+                        help="Anomaly scoring method")
     parser.add_argument("--output", default="results/diagnostic.json")
     args = parser.parse_args()
 
@@ -361,6 +434,9 @@ async def main():
             prepared, rng_seed=seed * 1000,
             ns=ns, n_agents=args.n_agents, attacker_k=50,
             codebook_free=args.codebook_free, R=args.R,
+            run_embedding=args.embedding,
+            embed_method=args.embed_method,
+            score_method=args.score_method,
         )
         all_seed_results.append(result)
 
@@ -368,7 +444,10 @@ async def main():
             parts = []
             for s in sorted(result[n].keys()):
                 d = result[n][s]
-                parts.append(f"{s}={d['auc']:.3f}(ct={d['counting_auc']:.3f})")
+                p = f"{s}={d['auc']:.3f}(ct={d['counting_auc']:.3f})"
+                if args.embedding and "embedding_auc" in d:
+                    p += f"(emb={d['embedding_auc']:.3f})"
+                parts.append(p)
             print(f"    N={n:>2}: {' | '.join(parts)}")
 
     # Aggregate across seeds
@@ -379,7 +458,10 @@ async def main():
     aggregated = {}
     header = f"{'N':<4}"
     for s in sorted(oracle_schemes.keys()):
-        header += f"  {'AUC_'+s:<20s}  {'ct_'+s:<20s}  {'FPR@80_'+s:<15s}  {'pAUC_'+s:<15s}"
+        header += f"  {'AUC_'+s:<20s}  {'ct_'+s:<20s}"
+        if args.embedding:
+            header += f"  {'emb_'+s:<20s}"
+        header += f"  {'FPR@80_'+s:<15s}  {'pAUC_'+s:<15s}"
     print(header)
     print("-" * len(header))
 
@@ -401,10 +483,8 @@ async def main():
 
             line += f"  {auc_mean:.3f}±{auc_std:.3f}       "
             line += f"  {ct_mean:.3f}±{ct_std:.3f}       "
-            line += f"  {fpr_mean:.3f}          "
-            line += f"  {pauc_mean:.3f}          "
 
-            aggregated[n][s] = {
+            agg_entry = {
                 "auc_mean": auc_mean, "auc_std": auc_std,
                 "counting_auc_mean": ct_mean, "counting_auc_std": ct_std,
                 "fpr_at_tpr80_mean": fpr_mean,
@@ -412,6 +492,20 @@ async def main():
                 "auc_per_seed": aucs,
                 "counting_auc_per_seed": ct_aucs,
             }
+
+            if args.embedding:
+                emb_aucs = [r[n][s].get("embedding_auc", 0.5) for r in all_seed_results]
+                emb_mean = statistics.mean(emb_aucs)
+                emb_std = statistics.stdev(emb_aucs) if len(emb_aucs) > 1 else 0
+                line += f"  {emb_mean:.3f}±{emb_std:.3f}       "
+                agg_entry["embedding_auc_mean"] = emb_mean
+                agg_entry["embedding_auc_std"] = emb_std
+                agg_entry["embedding_auc_per_seed"] = emb_aucs
+
+            line += f"  {fpr_mean:.3f}          "
+            line += f"  {pauc_mean:.3f}          "
+
+            aggregated[n][s] = agg_entry
         print(line)
 
     # --- Experiment 4: p_min bucket analysis ---
