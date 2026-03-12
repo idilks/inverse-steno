@@ -13,6 +13,7 @@ pulled_folder/
 writeups/
 
 # results / outputs
+paper/
 results/
 test_results/
 *.log
