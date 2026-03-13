@@ -1,0 +1,88 @@
+{
+  "n_questions": 100,
+  "k_ref": 100,
+  "model": "vertex_ai.gemini-3.1-flash-lite-preview",
+  "multi_obs": {
+    "experiment": "multi_obs",
+    "codebook_free": true,
+    "ns": [
+      1,
+      2,
+      3,
+      5,
+      7,
+      10
+    ],
+    "n_agents": 50,
+    "attacker_k": 50,
+    "results": {
+      "1": {
+        "synonym": {
+          "auc": 0.6546
+        },
+        "structural": {
+          "auc": 0.6388
+        },
+        "parity": {
+          "auc": 0.461
+        }
+      },
+      "2": {
+        "synonym": {
+          "auc": 0.6518
+        },
+        "structural": {
+          "auc": 0.6628
+        },
+        "parity": {
+          "auc": 0.565
+        }
+      },
+      "3": {
+        "synonym": {
+          "auc": 0.79
+        },
+        "structural": {
+          "auc": 0.7836
+        },
+        "parity": {
+          "auc": 0.5162
+        }
+      },
+      "5": {
+        "synonym": {
+          "auc": 0.8182
+        },
+        "structural": {
+          "auc": 0.8838
+        },
+        "parity": {
+          "auc": 0.5554
+        }
+      },
+      "7": {
+        "synonym": {
+          "auc": 0.9528
+        },
+        "structural": {
+          "auc": 0.9796
+        },
+        "parity": {
+          "auc": 0.5394
+        }
+      },
+      "10": {
+        "synonym": {
+          "auc": 0.98
+        },
+        "structural": {
+          "auc": 0.998
+        },
+        "parity": {
+          "auc": 0.67
+        }
+      }
+    },
+    "n_questions": 100
+  }
+}
