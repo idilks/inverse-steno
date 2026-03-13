@@ -8,12 +8,18 @@ __pycache__/
 .pytest_cache/
 .cache/
 *.cache
+cache/
+pulled_folder/
+writeups/
 
 # results / outputs
+paper/
 results/
 test_results/
 *.log
 
+# secrets
+.env
+
 # files
 *.pdf
-CLAUDE.md
