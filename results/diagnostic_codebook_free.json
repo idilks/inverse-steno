@@ -1,0 +1,919 @@
+{
+  "n_questions": 100,
+  "k_ref": 100,
+  "model": "vertex_ai.gemini-3.1-flash-lite-preview",
+  "mode": "codebook-free",
+  "n_seeds": 5,
+  "R_samples_per_question": 20,
+  "n_agents": 100,
+  "aggregated_multi_obs": {
+    "1": {
+      "parity": {
+        "auc_mean": 0.52035,
+        "auc_std": 0.033670536081268444,
+        "counting_auc_mean": 0.505,
+        "counting_auc_std": 0.0035355339059327407,
+        "fpr_at_tpr80_mean": 0.764,
+        "pauc_fpr01_mean": 0.04722,
+        "auc_per_seed": [
+          0.546,
+          0.5496,
+          0.5077,
+          0.5306,
+          0.46785
+        ],
+        "counting_auc_per_seed": [
+          0.505,
+          0.505,
+          0.505,
+          0.51,
+          0.5
+        ]
+      },
+      "structural": {
+        "auc_mean": 0.65613,
+        "auc_std": 0.03679343691475426,
+        "counting_auc_mean": 0.503,
+        "counting_auc_std": 0.004472135954999583,
+        "fpr_at_tpr80_mean": 0.548,
+        "pauc_fpr01_mean": 0.0435818,
+        "auc_per_seed": [
+          0.66675,
+          0.6692,
+          0.6817,
+          0.5911,
+          0.6719
+        ],
+        "counting_auc_per_seed": [
+          0.505,
+          0.5,
+          0.5,
+          0.5,
+          0.51
+        ]
+      },
+      "synonym": {
+        "auc_mean": 0.62557,
+        "auc_std": 0.045585107217160276,
+        "counting_auc_mean": 0.496,
+        "counting_auc_std": 0.008944271909999166,
+        "fpr_at_tpr80_mean": 0.568,
+        "pauc_fpr01_mean": 0.08057444444444445,
+        "auc_per_seed": [
+          0.67875,
+          0.65135,
+          0.57615,
+          0.57965,
+          0.64195
+        ],
+        "counting_auc_per_seed": [
+          0.485,
+          0.495,
+          0.495,
+          0.495,
+          0.51
+        ]
+      }
+    },
+    "2": {
+      "parity": {
+        "auc_mean": 0.52705,
+        "auc_std": 0.038033389935686786,
+        "counting_auc_mean": 0.62703,
+        "counting_auc_std": 0.018261421083803978,
+        "fpr_at_tpr80_mean": 0.736,
+        "pauc_fpr01_mean": 0.026806200000000002,
+        "auc_per_seed": [
+          0.57335,
+          0.4704,
+          0.5176,
+          0.52835,
+          0.54555
+        ],
+        "counting_auc_per_seed": [
+          0.605,
+          0.64015,
+          0.61,
+          0.645,
+          0.635
+        ]
+      },
+      "structural": {
+        "auc_mean": 0.74139,
+        "auc_std": 0.027559081987613435,
+        "counting_auc_mean": 0.6160599999999999,
+        "counting_auc_std": 0.010902660225834797,
+        "fpr_at_tpr80_mean": 0.48,
+        "pauc_fpr01_mean": 0.20179417500000002,
+        "auc_per_seed": [
+          0.7614,
+          0.7305,
+          0.75825,
+          0.7592,
+          0.6976
+        ],
+        "counting_auc_per_seed": [
+          0.625,
+          0.6253,
+          0.61,
+          0.62,
+          0.6
+        ]
+      },
+      "synonym": {
+        "auc_mean": 0.69333,
+        "auc_std": 0.021210156765097233,
+        "counting_auc_mean": 0.548,
+        "counting_auc_std": 0.0402492235949962,
+        "fpr_at_tpr80_mean": 0.59,
+        "pauc_fpr01_mean": 0.18122669841269842,
+        "auc_per_seed": [
+          0.7083,
+          0.67315,
+          0.71195,
+          0.70575,
+          0.6675
+        ],
+        "counting_auc_per_seed": [
+          0.59,
+          0.53,
+          0.55,
+          0.58,
+          0.49
+        ]
+      }
+    },
+    "3": {
+      "parity": {
+        "auc_mean": 0.48495,
+        "auc_std": 0.07142418182940563,
+        "counting_auc_mean": 0.78255,
+        "counting_auc_std": 0.01618788126964118,
+        "fpr_at_tpr80_mean": 0.774,
+        "pauc_fpr01_mean": 0.0288,
+        "auc_per_seed": [
+          0.4703,
+          0.4455,
+          0.55385,
+          0.56055,
+          0.39455
+        ],
+        "counting_auc_per_seed": [
+          0.782,
+          0.79775,
+          0.7936,
+          0.7832,
+          0.7562
+        ]
+      },
+      "structural": {
+        "auc_mean": 0.83407,
+        "auc_std": 0.024836203413565426,
+        "counting_auc_mean": 0.72622,
+        "counting_auc_std": 0.030122699082253578,
+        "fpr_at_tpr80_mean": 0.322,
+        "pauc_fpr01_mean": 0.3939,
+        "auc_per_seed": [
+          0.87135,
+          0.80445,
+          0.82315,
+          0.84185,
+          0.82955
+        ],
+        "counting_auc_per_seed": [
+          0.72525,
+          0.69225,
+          0.772,
+          0.73345,
+          0.70815
+        ]
+      },
+      "synonym": {
+        "auc_mean": 0.76238,
+        "auc_std": 0.05562677637613019,
+        "counting_auc_mean": 0.5812,
+        "counting_auc_std": 0.0429702949722247,
+        "fpr_at_tpr80_mean": 0.446,
+        "pauc_fpr01_mean": 0.336,
+        "auc_per_seed": [
+          0.8229,
+          0.77455,
+          0.8048,
+          0.71325,
+          0.6964
+        ],
+        "counting_auc_per_seed": [
+          0.53875,
+          0.6105,
+          0.6386,
+          0.54405,
+          0.5741
+        ]
+      }
+    },
+    "5": {
+      "parity": {
+        "auc_mean": 0.53275,
+        "auc_std": 0.048309095934409685,
+        "counting_auc_mean": 0.90827,
+        "counting_auc_std": 0.013735929164057296,
+        "fpr_at_tpr80_mean": 0.72,
+        "pauc_fpr01_mean": 0.03903,
+        "auc_per_seed": [
+          0.48115,
+          0.487,
+          0.59595,
+          0.55085,
+          0.5488
+        ],
+        "counting_auc_per_seed": [
+          0.89285,
+          0.92625,
+          0.8969,
+          0.9091,
+          0.91625
+        ]
+      },
+      "structural": {
+        "auc_mean": 0.93229,
+        "auc_std": 0.015060851569549432,
+        "counting_auc_mean": 0.8226,
+        "counting_auc_std": 0.03734805885183323,
+        "fpr_at_tpr80_mean": 0.10200000000000001,
+        "pauc_fpr01_mean": 0.6649,
+        "auc_per_seed": [
+          0.9341,
+          0.9166,
+          0.94595,
+          0.91705,
+          0.94775
+        ],
+        "counting_auc_per_seed": [
+          0.83295,
+          0.84045,
+          0.83405,
+          0.75675,
+          0.8488
+        ]
+      },
+      "synonym": {
+        "auc_mean": 0.88198,
+        "auc_std": 0.012837133636447033,
+        "counting_auc_mean": 0.56909,
+        "counting_auc_std": 0.04803707422397829,
+        "fpr_at_tpr80_mean": 0.192,
+        "pauc_fpr01_mean": 0.5542,
+        "auc_per_seed": [
+          0.8882,
+          0.8772,
+          0.8993,
+          0.8648,
+          0.8804
+        ],
+        "counting_auc_per_seed": [
+          0.6162,
+          0.5833,
+          0.60925,
+          0.5232,
+          0.5135
+        ]
+      }
+    },
+    "7": {
+      "parity": {
+        "auc_mean": 0.5672200000000001,
+        "auc_std": 0.039824044244652024,
+        "counting_auc_mean": 0.96595,
+        "counting_auc_std": 0.011683802891182277,
+        "fpr_at_tpr80_mean": 0.656,
+        "pauc_fpr01_mean": 0.0472,
+        "auc_per_seed": [
+          0.61155,
+          0.60045,
+          0.5541,
+          0.55765,
+          0.51235
+        ],
+        "counting_auc_per_seed": [
+          0.96485,
+          0.97385,
+          0.97375,
+          0.9712,
+          0.9461
+        ]
+      },
+      "structural": {
+        "auc_mean": 0.98572,
+        "auc_std": 0.0035639865319610857,
+        "counting_auc_mean": 0.89973,
+        "counting_auc_std": 0.024346909454795312,
+        "fpr_at_tpr80_mean": 0.012,
+        "pauc_fpr01_mean": 0.8894,
+        "auc_per_seed": [
+          0.9875,
+          0.9893,
+          0.9799,
+          0.9866,
+          0.9853
+        ],
+        "counting_auc_per_seed": [
+          0.8998,
+          0.934,
+          0.86515,
+          0.9005,
+          0.8992
+        ]
+      },
+      "synonym": {
+        "auc_mean": 0.92827,
+        "auc_std": 0.02811219930919671,
+        "counting_auc_mean": 0.62905,
+        "counting_auc_std": 0.035299486540175055,
+        "fpr_at_tpr80_mean": 0.09,
+        "pauc_fpr01_mean": 0.7009,
+        "auc_per_seed": [
+          0.95905,
+          0.92835,
+          0.9466,
+          0.92195,
+          0.8854
+        ],
+        "counting_auc_per_seed": [
+          0.61955,
+          0.6697,
+          0.61595,
+          0.65815,
+          0.5819
+        ]
+      }
+    },
+    "10": {
+      "parity": {
+        "auc_mean": 0.6489199999999999,
+        "auc_std": 0.030004428839756323,
+        "counting_auc_mean": 0.98614,
+        "counting_auc_std": 0.012787904441307027,
+        "fpr_at_tpr80_mean": 0.518,
+        "pauc_fpr01_mean": 0.0364,
+        "auc_per_seed": [
+          0.67235,
+          0.6133,
+          0.648,
+          0.6846,
+          0.62635
+        ],
+        "counting_auc_per_seed": [
+          0.99775,
+          0.9655,
+          0.98925,
+          0.98335,
+          0.99485
+        ]
+      },
+      "structural": {
+        "auc_mean": 0.99496,
+        "auc_std": 0.0027042559050504174,
+        "counting_auc_mean": 0.94489,
+        "counting_auc_std": 0.0062206711856519475,
+        "fpr_at_tpr80_mean": 0.004,
+        "pauc_fpr01_mean": 0.9628,
+        "auc_per_seed": [
+          0.9982,
+          0.9971,
+          0.9922,
+          0.9949,
+          0.9924
+        ],
+        "counting_auc_per_seed": [
+          0.95515,
+          0.93985,
+          0.94185,
+          0.9413,
+          0.9463
+        ]
+      },
+      "synonym": {
+        "auc_mean": 0.98378,
+        "auc_std": 0.006682121669050943,
+        "counting_auc_mean": 0.6607000000000001,
+        "counting_auc_std": 0.02682007177469887,
+        "fpr_at_tpr80_mean": 0.002,
+        "pauc_fpr01_mean": 0.9083,
+        "auc_per_seed": [
+          0.97875,
+          0.98435,
+          0.9778,
+          0.9946,
+          0.9834
+        ],
+        "counting_auc_per_seed": [
+          0.669,
+          0.63965,
+          0.6863,
+          0.6828,
+          0.62575
+        ]
+      }
+    }
+  },
+  "pmin_buckets": {
+    "synonym": {
+      "0.0-0.1": {
+        "auc": 0.4606643356643357,
+        "n_questions": 37,
+        "n_stego": 22
+      },
+      "0.1-0.2": {
+        "auc": 0.8873517786561265,
+        "n_questions": 22,
+        "n_stego": 22
+      },
+      "0.2-0.3": {
+        "auc": 0.485,
+        "n_questions": 10,
+        "n_stego": 10
+      },
+      "0.3-0.5": {
+        "auc": 0.36444444444444446,
+        "n_questions": 15,
+        "n_stego": 15
+      }
+    },
+    "structural": {
+      "0.0-0.1": {
+        "auc": 0.8128342245989305,
+        "n_questions": 14,
+        "n_stego": 11
+      },
+      "0.1-0.2": {
+        "auc": 0.8486842105263158,
+        "n_questions": 19,
+        "n_stego": 19
+      },
+      "0.2-0.3": {
+        "auc": 0.70703125,
+        "n_questions": 16,
+        "n_stego": 16
+      },
+      "0.3-0.5": {
+        "auc": 0.5246913580246914,
+        "n_questions": 45,
+        "n_stego": 45
+      }
+    },
+    "parity": {
+      "0.0-0.1": {
+        "auc": null,
+        "n_questions": 0,
+        "n_stego": 0
+      },
+      "0.1-0.2": {
+        "auc": null,
+        "n_questions": 0,
+        "n_stego": 0
+      },
+      "0.2-0.3": {
+        "auc": 0.5,
+        "n_questions": 1,
+        "n_stego": 1
+      },
+      "0.3-0.5": {
+        "auc": 0.5376344086021505,
+        "n_questions": 93,
+        "n_stego": 93
+      }
+    }
+  },
+  "per_seed_multi_obs": [
+    {
+      "1": {
+        "synonym": {
+          "auc": 0.67875,
+          "counting_auc": 0.485
+        },
+        "structural": {
+          "auc": 0.66675,
+          "counting_auc": 0.505
+        },
+        "parity": {
+          "auc": 0.546,
+          "counting_auc": 0.505
+        }
+      },
+      "2": {
+        "synonym": {
+          "auc": 0.7083,
+          "counting_auc": 0.59
+        },
+        "structural": {
+          "auc": 0.7614,
+          "counting_auc": 0.625
+        },
+        "parity": {
+          "auc": 0.57335,
+          "counting_auc": 0.605
+        }
+      },
+      "3": {
+        "synonym": {
+          "auc": 0.8229,
+          "counting_auc": 0.53875
+        },
+        "structural": {
+          "auc": 0.87135,
+          "counting_auc": 0.72525
+        },
+        "parity": {
+          "auc": 0.4703,
+          "counting_auc": 0.782
+        }
+      },
+      "5": {
+        "synonym": {
+          "auc": 0.8882,
+          "counting_auc": 0.6162
+        },
+        "structural": {
+          "auc": 0.9341,
+          "counting_auc": 0.83295
+        },
+        "parity": {
+          "auc": 0.48115,
+          "counting_auc": 0.89285
+        }
+      },
+      "7": {
+        "synonym": {
+          "auc": 0.95905,
+          "counting_auc": 0.61955
+        },
+        "structural": {
+          "auc": 0.9875,
+          "counting_auc": 0.8998
+        },
+        "parity": {
+          "auc": 0.61155,
+          "counting_auc": 0.96485
+        }
+      },
+      "10": {
+        "synonym": {
+          "auc": 0.97875,
+          "counting_auc": 0.669
+        },
+        "structural": {
+          "auc": 0.9982,
+          "counting_auc": 0.95515
+        },
+        "parity": {
+          "auc": 0.67235,
+          "counting_auc": 0.99775
+        }
+      }
+    },
+    {
+      "1": {
+        "synonym": {
+          "auc": 0.65135,
+          "counting_auc": 0.495
+        },
+        "structural": {
+          "auc": 0.6692,
+          "counting_auc": 0.5
+        },
+        "parity": {
+          "auc": 0.5496,
+          "counting_auc": 0.505
+        }
+      },
+      "2": {
+        "synonym": {
+          "auc": 0.67315,
+          "counting_auc": 0.53
+        },
+        "structural": {
+          "auc": 0.7305,
+          "counting_auc": 0.6253
+        },
+        "parity": {
+          "auc": 0.4704,
+          "counting_auc": 0.64015
+        }
+      },
+      "3": {
+        "synonym": {
+          "auc": 0.77455,
+          "counting_auc": 0.6105
+        },
+        "structural": {
+          "auc": 0.80445,
+          "counting_auc": 0.69225
+        },
+        "parity": {
+          "auc": 0.4455,
+          "counting_auc": 0.79775
+        }
+      },
+      "5": {
+        "synonym": {
+          "auc": 0.8772,
+          "counting_auc": 0.5833
+        },
+        "structural": {
+          "auc": 0.9166,
+          "counting_auc": 0.84045
+        },
+        "parity": {
+          "auc": 0.487,
+          "counting_auc": 0.92625
+        }
+      },
+      "7": {
+        "synonym": {
+          "auc": 0.92835,
+          "counting_auc": 0.6697
+        },
+        "structural": {
+          "auc": 0.9893,
+          "counting_auc": 0.934
+        },
+        "parity": {
+          "auc": 0.60045,
+          "counting_auc": 0.97385
+        }
+      },
+      "10": {
+        "synonym": {
+          "auc": 0.98435,
+          "counting_auc": 0.63965
+        },
+        "structural": {
+          "auc": 0.9971,
+          "counting_auc": 0.93985
+        },
+        "parity": {
+          "auc": 0.6133,
+          "counting_auc": 0.9655
+        }
+      }
+    },
+    {
+      "1": {
+        "synonym": {
+          "auc": 0.57615,
+          "counting_auc": 0.495
+        },
+        "structural": {
+          "auc": 0.6817,
+          "counting_auc": 0.5
+        },
+        "parity": {
+          "auc": 0.5077,
+          "counting_auc": 0.505
+        }
+      },
+      "2": {
+        "synonym": {
+          "auc": 0.71195,
+          "counting_auc": 0.55
+        },
+        "structural": {
+          "auc": 0.75825,
+          "counting_auc": 0.61
+        },
+        "parity": {
+          "auc": 0.5176,
+          "counting_auc": 0.61
+        }
+      },
+      "3": {
+        "synonym": {
+          "auc": 0.8048,
+          "counting_auc": 0.6386
+        },
+        "structural": {
+          "auc": 0.82315,
+          "counting_auc": 0.772
+        },
+        "parity": {
+          "auc": 0.55385,
+          "counting_auc": 0.7936
+        }
+      },
+      "5": {
+        "synonym": {
+          "auc": 0.8993,
+          "counting_auc": 0.60925
+        },
+        "structural": {
+          "auc": 0.94595,
+          "counting_auc": 0.83405
+        },
+        "parity": {
+          "auc": 0.59595,
+          "counting_auc": 0.8969
+        }
+      },
+      "7": {
+        "synonym": {
+          "auc": 0.9466,
+          "counting_auc": 0.61595
+        },
+        "structural": {
+          "auc": 0.9799,
+          "counting_auc": 0.86515
+        },
+        "parity": {
+          "auc": 0.5541,
+          "counting_auc": 0.97375
+        }
+      },
+      "10": {
+        "synonym": {
+          "auc": 0.9778,
+          "counting_auc": 0.6863
+        },
+        "structural": {
+          "auc": 0.9922,
+          "counting_auc": 0.94185
+        },
+        "parity": {
+          "auc": 0.648,
+          "counting_auc": 0.98925
+        }
+      }
+    },
+    {
+      "1": {
+        "synonym": {
+          "auc": 0.57965,
+          "counting_auc": 0.495
+        },
+        "structural": {
+          "auc": 0.5911,
+          "counting_auc": 0.5
+        },
+        "parity": {
+          "auc": 0.5306,
+          "counting_auc": 0.51
+        }
+      },
+      "2": {
+        "synonym": {
+          "auc": 0.70575,
+          "counting_auc": 0.58
+        },
+        "structural": {
+          "auc": 0.7592,
+          "counting_auc": 0.62
+        },
+        "parity": {
+          "auc": 0.52835,
+          "counting_auc": 0.645
+        }
+      },
+      "3": {
+        "synonym": {
+          "auc": 0.71325,
+          "counting_auc": 0.54405
+        },
+        "structural": {
+          "auc": 0.84185,
+          "counting_auc": 0.73345
+        },
+        "parity": {
+          "auc": 0.56055,
+          "counting_auc": 0.7832
+        }
+      },
+      "5": {
+        "synonym": {
+          "auc": 0.8648,
+          "counting_auc": 0.5232
+        },
+        "structural": {
+          "auc": 0.91705,
+          "counting_auc": 0.75675
+        },
+        "parity": {
+          "auc": 0.55085,
+          "counting_auc": 0.9091
+        }
+      },
+      "7": {
+        "synonym": {
+          "auc": 0.92195,
+          "counting_auc": 0.65815
+        },
+        "structural": {
+          "auc": 0.9866,
+          "counting_auc": 0.9005
+        },
+        "parity": {
+          "auc": 0.55765,
+          "counting_auc": 0.9712
+        }
+      },
+      "10": {
+        "synonym": {
+          "auc": 0.9946,
+          "counting_auc": 0.6828
+        },
+        "structural": {
+          "auc": 0.9949,
+          "counting_auc": 0.9413
+        },
+        "parity": {
+          "auc": 0.6846,
+          "counting_auc": 0.98335
+        }
+      }
+    },
+    {
+      "1": {
+        "synonym": {
+          "auc": 0.64195,
+          "counting_auc": 0.51
+        },
+        "structural": {
+          "auc": 0.6719,
+          "counting_auc": 0.51
+        },
+        "parity": {
+          "auc": 0.46785,
+          "counting_auc": 0.5
+        }
+      },
+      "2": {
+        "synonym": {
+          "auc": 0.6675,
+          "counting_auc": 0.49
+        },
+        "structural": {
+          "auc": 0.6976,
+          "counting_auc": 0.6
+        },
+        "parity": {
+          "auc": 0.54555,
+          "counting_auc": 0.635
+        }
+      },
+      "3": {
+        "synonym": {
+          "auc": 0.6964,
+          "counting_auc": 0.5741
+        },
+        "structural": {
+          "auc": 0.82955,
+          "counting_auc": 0.70815
+        },
+        "parity": {
+          "auc": 0.39455,
+          "counting_auc": 0.7562
+        }
+      },
+      "5": {
+        "synonym": {
+          "auc": 0.8804,
+          "counting_auc": 0.5135
+        },
+        "structural": {
+          "auc": 0.94775,
+          "counting_auc": 0.8488
+        },
+        "parity": {
+          "auc": 0.5488,
+          "counting_auc": 0.91625
+        }
+      },
+      "7": {
+        "synonym": {
+          "auc": 0.8854,
+          "counting_auc": 0.5819
+        },
+        "structural": {
+          "auc": 0.9853,
+          "counting_auc": 0.8992
+        },
+        "parity": {
+          "auc": 0.51235,
+          "counting_auc": 0.9461
+        }
+      },
+      "10": {
+        "synonym": {
+          "auc": 0.9834,
+          "counting_auc": 0.62575
+        },
+        "structural": {
+          "auc": 0.9924,
+          "counting_auc": 0.9463
+        },
+        "parity": {
+          "auc": 0.62635,
+          "counting_auc": 0.99485
+        }
+      }
+    }
+  ]
+}

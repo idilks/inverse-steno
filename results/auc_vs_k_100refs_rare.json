@@ -1,0 +1,159 @@
+{
+  "experiment": "auc_vs_attacker_k",
+  "attacker_ks": [
+    1,
+    2,
+    5,
+    10,
+    20,
+    50
+  ],
+  "k_ref": 100,
+  "target_bit_mode": "rare",
+  "results": {
+    "1": {
+      "attacker_k": 1,
+      "overall_auc": 0.75,
+      "per_scheme": {
+        "synonym": {
+          "auc": 0.5,
+          "n_honest": 10,
+          "n_stego": 0,
+          "n_failed": 10
+        },
+        "structural": {
+          "auc": 0.9,
+          "n_honest": 10,
+          "n_stego": 1,
+          "n_failed": 9
+        },
+        "parity": {
+          "auc": 0.7416666666666667,
+          "n_honest": 10,
+          "n_stego": 6,
+          "n_failed": 4
+        }
+      }
+    },
+    "2": {
+      "attacker_k": 2,
+      "overall_auc": 0.765,
+      "per_scheme": {
+        "synonym": {
+          "auc": 0.5,
+          "n_honest": 10,
+          "n_stego": 0,
+          "n_failed": 10
+        },
+        "structural": {
+          "auc": 0.5,
+          "n_honest": 10,
+          "n_stego": 0,
+          "n_failed": 10
+        },
+        "parity": {
+          "auc": 0.675,
+          "n_honest": 10,
+          "n_stego": 4,
+          "n_failed": 6
+        }
+      }
+    },
+    "5": {
+      "attacker_k": 5,
+      "overall_auc": 0.795,
+      "per_scheme": {
+        "synonym": {
+          "auc": 0.5,
+          "n_honest": 10,
+          "n_stego": 0,
+          "n_failed": 10
+        },
+        "structural": {
+          "auc": 0.9,
+          "n_honest": 10,
+          "n_stego": 1,
+          "n_failed": 9
+        },
+        "parity": {
+          "auc": 0.77,
+          "n_honest": 10,
+          "n_stego": 10,
+          "n_failed": 0
+        }
+      }
+    },
+    "10": {
+      "attacker_k": 10,
+      "overall_auc": 0.7954545454545454,
+      "per_scheme": {
+        "synonym": {
+          "auc": 0.5,
+          "n_honest": 10,
+          "n_stego": 0,
+          "n_failed": 10
+        },
+        "structural": {
+          "auc": 0.9,
+          "n_honest": 10,
+          "n_stego": 1,
+          "n_failed": 9
+        },
+        "parity": {
+          "auc": 0.77,
+          "n_honest": 10,
+          "n_stego": 10,
+          "n_failed": 0
+        }
+      }
+    },
+    "20": {
+      "attacker_k": 20,
+      "overall_auc": 0.8269230769230769,
+      "per_scheme": {
+        "synonym": {
+          "auc": 0.5,
+          "n_honest": 10,
+          "n_stego": 0,
+          "n_failed": 10
+        },
+        "structural": {
+          "auc": 0.9,
+          "n_honest": 10,
+          "n_stego": 1,
+          "n_failed": 9
+        },
+        "parity": {
+          "auc": 0.77,
+          "n_honest": 10,
+          "n_stego": 10,
+          "n_failed": 0
+        }
+      }
+    },
+    "50": {
+      "attacker_k": 50,
+      "overall_auc": 0.84,
+      "per_scheme": {
+        "synonym": {
+          "auc": 1.0,
+          "n_honest": 10,
+          "n_stego": 1,
+          "n_failed": 9
+        },
+        "structural": {
+          "auc": 0.975,
+          "n_honest": 10,
+          "n_stego": 4,
+          "n_failed": 6
+        },
+        "parity": {
+          "auc": 0.77,
+          "n_honest": 10,
+          "n_stego": 10,
+          "n_failed": 0
+        }
+      }
+    }
+  }
+}

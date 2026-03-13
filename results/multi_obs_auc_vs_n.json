@@ -1,0 +1,231 @@
+{
+  "experiment": "multi_observation_auc_vs_n",
+  "ns": [
+    1,
+    2,
+    3,
+    5,
+    7,
+    10
+  ],
+  "k_ref": 100,
+  "n_bootstrap": 500,
+  "results": {
+    "1": {
+      "n_observations": 1,
+      "overall_auc": 0.626916,
+      "per_scheme": {
+        "parity": {
+          "auc": 0.513996,
+          "honest_mean_score": 0.09526052360163356,
+          "stego_mean_score": 0.30001983712833213,
+          "n_bootstrap": 500
+        },
+        "position": {
+          "auc": 0.390516,
+          "honest_mean_score": 0.07900971750903212,
+          "stego_mean_score": -0.03641978736393848,
+          "n_bootstrap": 500
+        },
+        "structural": {
+          "auc": 1.0,
+          "honest_mean_score": 0.05985262986454356,
+          "stego_mean_score": 3.717600886551176,
+          "n_bootstrap": 500
+        },
+        "synonym": {
+          "auc": 0.759258,
+          "honest_mean_score": 0.04948433499506138,
+          "stego_mean_score": 2.253667023291397,
+          "n_bootstrap": 500
+        },
+        "watermark_proxy": {
+          "auc": 0.53403,
+          "honest_mean_score": 0.07781203511129627,
+          "stego_mean_score": 0.05594652792298381,
+          "n_bootstrap": 500
+        }
+      }
+    },
+    "2": {
+      "n_observations": 2,
+      "overall_auc": 0.664126,
+      "per_scheme": {
+        "parity": {
+          "auc": 0.599506,
+          "honest_mean_score": 0.08042079337650639,
+          "stego_mean_score": 0.5445589117058953,
+          "n_bootstrap": 500
+        },
+        "position": {
+          "auc": 0.427998,
+          "honest_mean_score": 0.08660181091727538,
+          "stego_mean_score": -0.0735768219916829,
+          "n_bootstrap": 500
+        },
+        "structural": {
+          "auc": 1.0,
+          "honest_mean_score": 0.09216123282236986,
+          "stego_mean_score": 5.555618054611289,
+          "n_bootstrap": 500
+        },
+        "synonym": {
+          "auc": 0.91354,
+          "honest_mean_score": 0.05424586181040029,
+          "stego_mean_score": 3.905761349825365,
+          "n_bootstrap": 500
+        },
+        "watermark_proxy": {
+          "auc": 0.546228,
+          "honest_mean_score": 0.06709868682278854,
+          "stego_mean_score": 0.08081994182032468,
+          "n_bootstrap": 500
+        }
+      }
+    },
+    "3": {
+      "n_observations": 3,
+      "overall_auc": 0.69974,
+      "per_scheme": {
+        "parity": {
+          "auc": 0.686938,
+          "honest_mean_score": 0.0765044789740558,
+          "stego_mean_score": 0.8094695652546633,
+          "n_bootstrap": 500
+        },
+        "position": {
+          "auc": 0.385444,
+          "honest_mean_score": 0.08337875021507239,
+          "stego_mean_score": -0.15390390440778684,
+          "n_bootstrap": 500
+        },
+        "structural": {
+          "auc": 1.0,
+          "honest_mean_score": 0.06814890148431471,
+          "stego_mean_score": 7.997902093650965,
+          "n_bootstrap": 500
+        },
+        "synonym": {
+          "auc": 0.9632,
+          "honest_mean_score": 0.09418563373654892,
+          "stego_mean_score": 5.6703056960193,
+          "n_bootstrap": 500
+        },
+        "watermark_proxy": {
+          "auc": 0.527514,
+          "honest_mean_score": 0.09759286613664375,
+          "stego_mean_score": 0.07829142201552139,
+          "n_bootstrap": 500
+        }
+      }
+    },
+    "5": {
+      "n_observations": 5,
+      "overall_auc": 0.712268,
+      "per_scheme": {
+        "parity": {
+          "auc": 0.714602,
+          "honest_mean_score": 0.021059167043301564,
+          "stego_mean_score": 0.9389938598665615,
+          "n_bootstrap": 500
+        },
+        "position": {
+          "auc": 0.404906,
+          "honest_mean_score": 0.04347801239644636,
+          "stego_mean_score": -0.229254928392237,
+          "n_bootstrap": 500
+        },
+        "structural": {
+          "auc": 1.0,
+          "honest_mean_score": 0.05705786202628702,
+          "stego_mean_score": 12.453946698965572,
+          "n_bootstrap": 500
+        },
+        "synonym": {
+          "auc": 0.984186,
+          "honest_mean_score": 0.062265872465395236,
+          "stego_mean_score": 9.179386399601317,
+          "n_bootstrap": 500
+        },
+        "watermark_proxy": {
+          "auc": 0.513,
+          "honest_mean_score": 0.11117640729574899,
+          "stego_mean_score": 0.0963558019489306,
+          "n_bootstrap": 500
+        }
+      }
+    },
+    "7": {
+      "n_observations": 7,
+      "overall_auc": 0.753076,
+      "per_scheme": {
+        "parity": {
+          "auc": 0.68725,
+          "honest_mean_score": 0.0762411131052179,
+          "stego_mean_score": 1.0950375544024546,
+          "n_bootstrap": 500
+        },
+        "position": {
+          "auc": 0.365954,
+          "honest_mean_score": 0.055533587178018075,
+          "stego_mean_score": -0.3664176044636182,
+          "n_bootstrap": 500
+        },
+        "structural": {
+          "auc": 1.0,
+          "honest_mean_score": 0.07665005908662303,
+          "stego_mean_score": 16.71642022289885,
+          "n_bootstrap": 500
+        },
+        "synonym": {
+          "auc": 0.996028,
+          "honest_mean_score": 0.054587454396062725,
+          "stego_mean_score": 13.299042957241214,
+          "n_bootstrap": 500
+        },
+        "watermark_proxy": {
+          "auc": 0.555924,
+          "honest_mean_score": 0.07233207688238986,
+          "stego_mean_score": 0.1677124178523963,
+          "n_bootstrap": 500
+        }
+      }
+    },
+    "10": {
+      "n_observations": 10,
+      "overall_auc": 0.703284,
+      "per_scheme": {
+        "parity": {
+          "auc": 0.687266,
+          "honest_mean_score": 0.10189375944308317,
+          "stego_mean_score": 1.219545428059297,
+          "n_bootstrap": 500
+        },
+        "position": {
+          "auc": 0.376142,
+          "honest_mean_score": 0.004415140989930503,
+          "stego_mean_score": -0.4728128579747563,
+          "n_bootstrap": 500
+        },
+        "structural": {
+          "auc": 1.0,
+          "honest_mean_score": 0.07721111605143045,
+          "stego_mean_score": 23.113182968302922,
+          "n_bootstrap": 500
+        },
+        "synonym": {
+          "auc": 0.999052,
+          "honest_mean_score": 0.04040076073150899,
+          "stego_mean_score": 18.6780425784526,
+          "n_bootstrap": 500
+        },
+        "watermark_proxy": {
+          "auc": 0.579228,
+          "honest_mean_score": 0.07136665582861666,
+          "stego_mean_score": 0.26008759197026254,
+          "n_bootstrap": 500
+        }
+      }
+    }
+  }
+}

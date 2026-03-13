@@ -14,8 +14,8 @@ writeups/
 
 # results / outputs
 paper/
-results/
-test_results/
+# results/
+# test_results/
 *.log
 
 # secrets
